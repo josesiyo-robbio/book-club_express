@@ -80,6 +80,52 @@ const ClubQuery =
     `
     INSERT INTO club_book_vote (club_id,book_id)
     VALUES($1,$2)
+    `,
+
+
+    UPDATE_VOTE_COUNTER_BOOK:
+    `
+    UPDATE club_book_vote
+    SET 
+        vote_count = vote_count + 1 
+    WHERE 
+        club_id = $1 
+    AND 
+        book_id = $2
+    RETURNING vote_count;
+    `,
+
+
+    SELECT_TOP_BOOK:
+    `
+    SELECT
+        book_id
+    FROM 
+        club_book_vote
+    ORDER BY 
+        vote_count DESC
+    LIMIT 1;
+    `,
+
+    UPDATE_CURRENT_BOOK :
+    `
+    UPDATE
+        club_book
+    SET
+        is_current = TRUE
+    WHERE 
+        id = $1
+    RETURNING id;
+    `,
+
+
+    UPDATE_CURRENT_BOOK_STATUS:
+    `UPDATE 
+        club_book 
+    SET
+        is_current = FALSE 
+    WHERE 
+        is_current = TRUE
     `
 }
 

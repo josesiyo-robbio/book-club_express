@@ -123,6 +123,65 @@ const ClubController =
             console.log(error);
             res.status(500).json({ message: 'Error', error: { message: error.message } });
         }
+    },
+
+
+
+
+
+
+    new_vote_counter : async (req,res) =>
+    {
+        try
+        {
+            const {bookId} = req.body;
+
+            const authHeader = req.headers.authorization;
+            if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                return res.status(401).json({ message: 'Token missing or invalid' });
+            }
+            const token = authHeader.split(' ')[1];
+            const decoded = jwt.verify(token, SECRET_KEY);
+
+            const clubId =  decoded.clubId;
+            const memberEmail = decoded.email;
+
+            const newVote = await moduleCLUB.update_vote_count(clubId,bookId);
+            if(!newVote)
+            {
+                res.status(400).json('error to get a vote');
+                return;
+            }
+            return res.status(200).json('vote created successfully');
+        }
+        catch (error)
+        {
+            console.log(error);
+            res.status(500).json({ message: 'Error', error: { message: error.message } });
+        }
+    },
+
+
+    new_current_book : async (req,res) =>
+    {
+        try
+        {
+
+            const newActualBook = await moduleCLUB.update_current_book();
+
+            if(!newActualBook)
+            {
+                res.status(400).json('error to get a current book');
+                return;
+            }
+            return res.status(200).json('current book created successfully');
+        }
+        catch (error)
+        {
+            console.log(error);
+            res.status(500).json({ message: 'Error', error: { message: error.message } });
+        }
+
     }
 
 

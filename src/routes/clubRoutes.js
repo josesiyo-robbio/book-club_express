@@ -9,5 +9,7 @@ const clubController = require('../controller/clubController');
 router.post('/club/create',clubController.new_club);
 router.post('/review/create',clubController.new_review);
 router.post('/book/new',clubController.new_book);
+router.post('/book/vote',clubController.new_vote_counter);
+router.patch('/book/actual-update',clubController.new_current_book);
 
 module.exports = router;

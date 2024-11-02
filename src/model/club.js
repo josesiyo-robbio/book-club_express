@@ -76,6 +76,50 @@ const Club =
             console.error('Error:', error);
             throw error;
         }
+    },
+
+
+    update_current_book : async() =>
+    {
+        try
+        {
+            const result = await moduleDB.tx(async t => {
+                const topBook = await t.one(moduleCLUBQUERY.SELECT_TOP_BOOK);
+                const bookId = topBook.book_id;
+
+                await t.none(moduleCLUBQUERY.UPDATE_CURRENT_BOOK_STATUS);
+                await t.one(moduleCLUBQUERY.UPDATE_CURRENT_BOOK,[bookId]);
+                return bookId;
+            });
+            console.log('results',result);
+            return result;
+        }
+        catch(error)
+        {
+            console.error('Error:', error);
+            throw error;
+        }
+    },
+
+
+
+    update_vote_count : async (clubId,bookId) =>
+    {
+        try
+        {
+            const result = await moduleDB.one({
+                text : moduleCLUBQUERY.UPDATE_VOTE_COUNTER_BOOK,
+                values : [clubId,bookId],
+                rowMode : 'json'
+            });
+            console.log('results',result);
+            return result;
+        }
+        catch(error)
+        {
+            console.error('Error:', error);
+            throw error;
+        }
     }
 
 }
