@@ -116,39 +116,31 @@ const ClubController =
 
     new_vote_counter : async (req,res) =>
     {
-        try
+        try 
         {
-            const {bookId} = req.body;
-            let requiredFields = ['bookId'];
-
+            const { clubId } = req.user;
+            const { bookId } = req.body;
+            const requiredFields = ['bookId'];
+    
             const validation = validateRequiredFields(req.body, requiredFields);
-            if (!validation.success)
+            if (!validation.success) 
             {
-                res.status(400).json({message: validation.message, missingFields: validation.missingFields});
-                return;
+                return res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
             }
-
-            const authHeader = req.headers.authorization;
-            if (!authHeader || !authHeader.startsWith('Bearer '))
+    
+            const newVote = await moduleCLUB.update_vote_count(clubId, bookId);
+    
+            if (!newVote) 
             {
-                return res.status(401).json({ message: 'Token missing or invalid' });
+                return res.status(400).json({ message: 'Error updating vote count' });
             }
-            const token = authHeader.split(' ')[1];
-            const decoded = jwt.verify(token, SECRET_KEY);
-            const clubId =  decoded.clubId;
-
-            const newVote = await moduleCLUB.update_vote_count(clubId,bookId);
-            if(!newVote)
-            {
-                res.status(400).json('error to get a vote');
-                return;
-            }
-            return res.status(200).json('vote created successfully');
-        }
-        catch (error)
+    
+            return res.status(200).json({ message: 'Vote count updated successfully' });
+        } 
+        catch (error) 
         {
-            console.log(error);
-            res.status(500).json({ message: 'Error', error: { message: error.message } });
+            console.error(error);
+            return res.status(500).json({ message: 'Internal Server Error', error: { message: error.message } });
         }
     },
 
