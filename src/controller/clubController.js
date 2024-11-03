@@ -83,40 +83,32 @@ const ClubController =
 
     new_book : async (req,res) =>
     {
-        try
+
+        try 
         {
-            const authHeader = req.headers.authorization;
-            if (!authHeader || !authHeader.startsWith('Bearer '))
-            {
-                return res.status(401).json({ message: 'Token missing or invalid' });
-            }
-
-            const token                 =   authHeader.split(' ')[1];
-            const decoded               =   jwt.verify(token, SECRET_KEY);
-            const clubId                =   decoded.clubId;
-            const {name,description}    =   req.body;
-            let requiredFields          =   ['name','description'];
-
+            const { clubId } = req.user; 
+            const { name, description } = req.body;
+            const requiredFields = ['name', 'description'];
+    
             const validation = validateRequiredFields(req.body, requiredFields);
-            if (!validation.success)
+            if (!validation.success) 
             {
-                res.status(400).json({message: validation.message, missingFields: validation.missingFields});
-                return;
+                return res.status(400).json({ message: validation.message, missingFields: validation.missingFields });
             }
-
-            const newBook = await  moduleCLUB.insert_new_book(clubId,name,description);
-
-            if(!newBook)
+    
+            const newBook = await moduleCLUB.insert_new_book(clubId, name, description);
+    
+            if (!newBook) 
             {
-                res.status(400).json('error to get a book');
-                return;
+                return res.status(400).json({ message: 'Error creating the book' });
             }
-            return res.status(200).json('book created successfully');
-        }
-        catch (error)
+    
+            return res.status(200).json({ message: 'Book created successfully' });
+        } 
+        catch (error) 
         {
-            console.log(error);
-            res.status(500).json({ message: 'Error', error: { message: error.message } });
+            console.error(error);
+            return res.status(500).json({ message: 'Internal Server Error', error: { message: error.message } });
         }
     },
 
