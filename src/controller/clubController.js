@@ -1,12 +1,9 @@
 
 
 
-const moduleCLUB    =   require('../model/club');
-const jwt           =   require('jsonwebtoken');
-const SECRET_KEY    =   process.env.SECRET_KEY;
-
-const {validateRequiredFields} = require("../middleware/validatorApi");
-const {createTransporter,sendWelcomeEmails} = require('../service/mailService');
+const moduleCLUB                =   require('../model/club');
+const {validateRequiredFields}  =   require("../middleware/validatorApi");
+const {sendWelcomeEmails}       =   require('../service/mailService');
 
 
 
@@ -38,10 +35,8 @@ const ClubController =
             }
     
             await sendWelcomeEmails(members, newClub);
-    
             return res.status(200).json({ message: 'Club created successfully' });
         } 
-
         catch (error)
         {
             console.log(error);
@@ -83,7 +78,6 @@ const ClubController =
 
     new_book : async (req,res) =>
     {
-
         try 
         {
             const { clubId } = req.user; 
@@ -148,22 +142,20 @@ const ClubController =
 
     new_current_book : async (req,res) =>
     {
-        try
+        try 
         {
-
             const newActualBook = await moduleCLUB.update_current_book();
-
-            if(!newActualBook)
+    
+            if (!newActualBook) 
             {
-                res.status(400).json('error to get a current book');
-                return;
+                return res.status(400).json({ message: 'Error updating the current book' });
             }
-            return res.status(200).json('current book created successfully');
-        }
-        catch (error)
+            return res.status(200).json({ message: 'Current book updated successfully' });
+        } 
+        catch (error) 
         {
-            console.log(error);
-            res.status(500).json({ message: 'Error', error: { message: error.message } });
+            console.error(error);
+            return res.status(500).json({ message: 'Internal Server Error', error: { message: error.message } });
         }
     }
 

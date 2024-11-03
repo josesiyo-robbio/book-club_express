@@ -1,4 +1,7 @@
-const nodemailer = require("nodemailer");
+
+
+
+const nodemailer    = require("nodemailer");
 const jwt           =   require('jsonwebtoken');
 const SECRET_KEY    =   process.env.SECRET_KEY;
 

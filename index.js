@@ -2,68 +2,28 @@
 
 
 require('dotenv').config();
-const moduleBODYPARSER  =   require('body-parser');
-const moduleEXPRESS     =   require('express');
-const moduleCORS        =   require('cors');
+const express = require('express');
+const cors = require('cors');
 
+const routesClub = require('./src/routes/clubRoutes');
 
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-//------------------ROUTES IMPORTS---------------------------------------------------|
+// Middleware
+app.use(express.json());
+app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:8080' }));
 
-//KITTENS
-const routesClub            =   require('./src/routes/clubRoutes');
+// Routes
+app.use('/api', routesClub);
 
-
-
-
-//------------------ROUTES IMPORTS---------------------------------------------------|
-
-
-
-
-
-//---------------------Cors Config & Other Stuff-------------------------------------|
-
-const app   = moduleEXPRESS();
-const PORT  = process.env.PORT || 3000;
-
-const corsOptions = {origin: 'http://localhost:8080', };
-app.use(moduleEXPRESS.json());
-app.use(moduleCORS(corsOptions));
-app.use(moduleBODYPARSER.json());
-app.use(moduleBODYPARSER.urlencoded({ extended: true }));
-
-//---------------------Cors Config & Other Stuff-------------------------------------|
-
-
-
-
-
-//-----------APIs SECTION-------------------------------------------------------------|
-
-//KITTENS
-app.use('/api',routesClub);
-
-
-//-----------APIs SECTION------------------------------------------------------------------|
-
-
-
-
-
-//--------------------SERVER SECTION-------------------------------|
-
-app.use((err, req, res, next) =>
-{
+// Error Handler
+app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
 });
 
-
-//se inicia el servidor
-app.listen(PORT, () =>
-{
+// Start Server
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
-//--------------------SERVER SECTION-------------------------------|
