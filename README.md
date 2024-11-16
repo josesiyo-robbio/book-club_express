@@ -1,4 +1,4 @@
-# Book Club API
+# Book Club 
 
 ## Overview
 A RESTful API built with Express.js for managing book clubs, enabling users to create reading groups, add books, share reviews, and implement a voting system for book selection. The application includes authentication and email notification features.
